@@ -6,6 +6,8 @@ import Home from '../views/Home.vue'
 import Article from '../views/articleManager/index.vue'
 import Soul from '../views/soulManager/index.vue'
 import Question from '../views/questionManager/index.vue'
+import Tag from '../views/tagManager/index.vue'
+import Type from '../views/typeManager/index.vue'
 
 Vue.use(Router)
 
@@ -33,6 +35,14 @@ export default new Router({
         {
           path: '/question',
           component: Question
+        },
+        {
+          path: '/tag',
+          component: Tag
+        },
+        {
+          path: '/type',
+          component: Type
         }
       ]
     }

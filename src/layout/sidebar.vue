@@ -9,6 +9,8 @@
                 <el-menu-item index="/">文章管理</el-menu-item>
                 <el-menu-item index="/question">试题管理</el-menu-item>
                 <el-menu-item index="/soul">心灵鸡汤</el-menu-item>
+                <el-menu-item index="/tag">标签管理</el-menu-item>
+                <el-menu-item index="/type">类别管理</el-menu-item>
             </el-submenu>
             <el-submenu index="/sys">
                 <template slot="title">
