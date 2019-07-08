@@ -46,6 +46,12 @@
                 <el-form-item label="标题" label-width="80px">
                     <el-input v-model="item.name" autocomplete="off"></el-input>
                 </el-form-item>
+                <el-form-item label="图标" label-width="80px">
+                    <el-upload class="avatar-uploader" action="http://127.0.0.1:3000/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -59,6 +65,7 @@
 export default {
     data() {
         return {
+            imageUrl: '',
             pageIndex: 1,
             pageSize: 10,
             total: 0,
@@ -105,7 +112,7 @@ export default {
                     return response.json();
                 })
                 .then(function (res) {
-                    if(res.code == 0){
+                    if (res.code == 0) {
                         that.tableData = res.data.list
                         that.total = res.data.total
                     }
@@ -128,7 +135,8 @@ export default {
          * 修改按钮回调
          */
         editCb(item) {
-            this.item =  Object.assign({},item);
+            this.item = Object.assign({}, item);
+            this.imageUrl = item.url;
             this.isAdd = false;
             this.dialogFormVisible = true;
         },
@@ -168,6 +176,7 @@ export default {
         addType() {
             this.item = {};
             this.isAdd = true;
+            this.imageUrl = '';
             this.dialogFormVisible = true;
         },
         /**
@@ -175,7 +184,12 @@ export default {
          */
         saveCb() {
             let that = this;
+            if (!that.imageUrl) { //如果没有上传图片
+                this.$message.error('请上传类别图标！');
+                return
+            }
             let item = that.item;
+            item.url = that.imageUrl
             fetch('http://localhost:3000/addUpdateType', {
                 method: 'POST',
                 body: JSON.stringify(item),
@@ -187,11 +201,32 @@ export default {
                     return response.json();
                 })
                 .then(function (resData) {
-                    if(resData.code == 0){
+                    if (resData.code == 0) {
                         that.dialogFormVisible = false;
                         that.toSearch();
                     }
                 });
+        },
+        /**
+        * 图片上传成功回调
+        */
+        handleAvatarSuccess(res, file) {
+            this.imageUrl = res.data.url
+        },
+        /**
+        * 上传前控制
+        */
+        beforeAvatarUpload(file) {
+            const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isJPG) {
+                this.$message.error('上传头像图片只能是 JPG 格式!');
+            }
+            if (!isLt2M) {
+                this.$message.error('上传头像图片大小不能超过 2MB!');
+            }
+            return isJPG && isLt2M;
         }
     }
 }
@@ -201,5 +236,28 @@ export default {
 .pagination-wrap {
   text-align: right;
   margin-top: 20px;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+  text-align: center;
+}
+.avatar {
+  width: 80px;
+  height: 80px;
+  display: block;
 }
 </style>
