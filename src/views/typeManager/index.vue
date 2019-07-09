@@ -46,6 +46,9 @@
                 <el-form-item label="标题" label-width="80px">
                     <el-input v-model="item.name" autocomplete="off"></el-input>
                 </el-form-item>
+                <el-form-item label="父级" label-width="80px">
+                    <el-cascader v-model="item.pid" :options="options" :props="{value:'_id',label:'name', checkStrictly: true }" clearable></el-cascader>
+                </el-form-item>
                 <el-form-item label="图标" label-width="80px">
                     <el-upload class="avatar-uploader" action="http://127.0.0.1:3000/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                         <img v-if="imageUrl" :src="imageUrl" class="avatar">
@@ -65,13 +68,16 @@
 export default {
     data() {
         return {
+            options: [],
             imageUrl: '',
             pageIndex: 1,
             pageSize: 10,
             total: 0,
             isAdd: true,
             item: {
-                name: ''
+                name: '',
+                url: '',
+                pid: ''
             },
             dialogFormVisible: false,
             dialogVisible: false,
@@ -90,6 +96,7 @@ export default {
 
     mounted() {
         this.toSearch();
+        this.initSelectData();
     },
     methods: {
         /**
@@ -136,6 +143,7 @@ export default {
          */
         editCb(item) {
             this.item = Object.assign({}, item);
+            this.item.pid = 'collapse'
             this.imageUrl = item.url;
             this.isAdd = false;
             this.dialogFormVisible = true;
@@ -206,6 +214,48 @@ export default {
                         that.toSearch();
                     }
                 });
+        },
+        initSelectData() {
+            let that = this;
+            fetch('http://localhost:3000/findAllTypes', {
+                method: 'POST',
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                })
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (resData) {
+                    if (resData.code == 0) {
+                        let tree = that.filterArray(resData.data.list);
+                        console.log(tree)
+                    }
+                });
+        },
+        /**
+        * 根据后台返回数据格式化树形结构
+        */
+        filterArray(data, pid) {
+            let vm = this;
+            var tree = [];
+            var temp;
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].pid == pid) {
+                    var obj = data[i];
+                    temp = filterArray(data, data[i]._id);
+                    if (temp.length > 0) {
+                        obj.subs = temp;
+                    }
+                    tree.push(obj);
+                }
+            }
+            return tree;
+        },
+        getChildData(list, id) {
+            return list.filter((item) => {
+                return item.pid == id
+            })
         },
         /**
         * 图片上传成功回调
