@@ -10,17 +10,15 @@
             </el-form-item>
         </el-form>
         <el-table :data="tableData" row-key="_id" border style="width: 100%" :load="load" lazy :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
-            <!-- <el-table-column type="index" width="50">
-            </el-table-column> -->
+            <el-table-column type="index" width="50">
+            </el-table-column>
             <el-table-column prop="name" label="标题">
             </el-table-column>
-            <!-- <el-table-column prop="enable" label="状态">
+            <el-table-column prop="enable" label="图标">
                 <template slot-scope="scope">
-                    <el-tag effect="plain" size="mini">
-                        {{ scope.row.enable ? '已启用':'已禁用' }}
-                    </el-tag>
+                    <img :src="scope.row.url" alt="" class="type-icon">
                 </template>
-            </el-table-column> -->
+            </el-table-column>
             <el-table-column sortable prop="created_at" label="日期">
             </el-table-column>
             <el-table-column label="操作" width="300">
@@ -318,5 +316,9 @@ export default {
   width: 80px;
   height: 80px;
   display: block;
+}
+.type-icon{
+    width: 36px;
+    height: 36px;
 }
 </style>
