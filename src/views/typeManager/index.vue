@@ -9,9 +9,9 @@
                 <el-button type="primary" @click="addType" size="small">新增</el-button>
             </el-form-item>
         </el-form>
-        <el-table :data="tableData" border style="width: 100%">
-            <el-table-column type="index" width="50">
-            </el-table-column>
+        <el-table :data="tableData" row-key="_id" border style="width: 100%" :load="load" lazy :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+            <!-- <el-table-column type="index" width="50">
+            </el-table-column> -->
             <el-table-column prop="name" label="标题">
             </el-table-column>
             <!-- <el-table-column prop="enable" label="状态">
@@ -50,7 +50,7 @@
                     <el-cascader v-model="item.pid" :options="options" :props="{value:'_id',label:'name', checkStrictly: true }" clearable></el-cascader>
                 </el-form-item>
                 <el-form-item label="图标" label-width="80px">
-                    <el-upload class="avatar-uploader" action="http://127.0.0.1:3000/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                    <el-upload class="avatar-uploader" action="http://localhost:3000/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                         <img v-if="imageUrl" :src="imageUrl" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
@@ -96,7 +96,6 @@ export default {
 
     mounted() {
         this.toSearch();
-        this.initSelectData();
     },
     methods: {
         /**
@@ -142,8 +141,8 @@ export default {
          * 修改按钮回调
          */
         editCb(item) {
+            this.initSelectData();
             this.item = Object.assign({}, item);
-            this.item.pid = 'collapse'
             this.imageUrl = item.url;
             this.isAdd = false;
             this.dialogFormVisible = true;
@@ -186,6 +185,7 @@ export default {
             this.isAdd = true;
             this.imageUrl = '';
             this.dialogFormVisible = true;
+            this.initSelectData();
         },
         /**
          * 新增修改保存
@@ -197,7 +197,12 @@ export default {
                 return
             }
             let item = that.item;
-            item.url = that.imageUrl
+            item.url = that.imageUrl;
+            if(item.pid){
+                item.pid = item.pid[0]
+            }else{
+                item.pid = ''
+            }
             fetch('http://localhost:3000/addUpdateType', {
                 method: 'POST',
                 body: JSON.stringify(item),
@@ -228,29 +233,13 @@ export default {
                 })
                 .then(function (resData) {
                     if (resData.code == 0) {
-                        let tree = that.filterArray(resData.data.list);
-                        console.log(tree)
+                        console.log(resData.data)
+                        that.options = resData.data.list;
+                        //console.log(resData.data.list)
+                        //let tree = that.filterArray(resData.data.list);
+                        //console.log(tree)
                     }
                 });
-        },
-        /**
-        * 根据后台返回数据格式化树形结构
-        */
-        filterArray(data, pid) {
-            let vm = this;
-            var tree = [];
-            var temp;
-            for (var i = 0; i < data.length; i++) {
-                if (data[i].pid == pid) {
-                    var obj = data[i];
-                    temp = filterArray(data, data[i]._id);
-                    if (temp.length > 0) {
-                        obj.subs = temp;
-                    }
-                    tree.push(obj);
-                }
-            }
-            return tree;
         },
         getChildData(list, id) {
             return list.filter((item) => {
@@ -277,6 +266,26 @@ export default {
                 this.$message.error('上传头像图片大小不能超过 2MB!');
             }
             return isJPG && isLt2M;
+        },
+        load(tree,treeNode,resolve){
+            let that = this;
+            fetch('http://localhost:3000/findTypesByPid', {
+                method: 'POST',
+                body: JSON.stringify({
+                    pid: tree._id
+                }),
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                })
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (res) {
+                    if (res.code == 0) {
+                        resolve(res.data.list)
+                    }
+                });
         }
     }
 }
