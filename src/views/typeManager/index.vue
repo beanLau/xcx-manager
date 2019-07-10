@@ -231,7 +231,7 @@ export default {
                 })
                 .then(function (resData) {
                     if (resData.code == 0) {
-                        that.options = that.setOptionsData(resData.data.list)
+                        that.options = that.setOptionsData(resData.data.list,'')
                     }
                 });
         },

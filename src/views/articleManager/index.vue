@@ -5,9 +5,7 @@
                 <el-input v-model="formInline.title" placeholder="标题"></el-input>
             </el-form-item>
             <el-form-item label="类型">
-                <el-select v-model="formInline.typeId" clearable placeholder="类型">
-                    <el-option :label="type.name" :value="type._id" v-for="(type, index) in typeList" :key="index"></el-option>
-                </el-select>
+                <el-cascader v-model="formInline.typeId" :options="options" :props="{value:'_id',label:'name', checkStrictly: true }" clearable></el-cascader>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="toSearch" icon="el-icon-search" size="small">搜索</el-button>
@@ -143,11 +141,12 @@ export default {
                 })
                 .then(function (resData) {
                     if (resData.code == 0) {
-                        that.options = that.setOptionsData(resData.data.list)
+                        that.options = that.setOptionsData(resData.data.list,'')
+                        console.log(that.options)
                     }
                 });
         },
-        setOptionsData(list){
+        setOptionsData(list,pid){
             pid = pid || '';
             let filterData = list.filter((item)=>{
                 return item.pid == pid
