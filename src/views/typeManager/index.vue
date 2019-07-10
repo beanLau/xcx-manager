@@ -197,7 +197,7 @@ export default {
             let item = that.item;
             item.url = that.imageUrl;
             if(item.pid){
-                item.pid = item.pid[0]
+                item.pid = item.pid[item.pid.length-1 || 0]
             }else{
                 item.pid = ''
             }
@@ -231,13 +231,19 @@ export default {
                 })
                 .then(function (resData) {
                     if (resData.code == 0) {
-                        console.log(resData.data)
-                        that.options = resData.data.list;
-                        //console.log(resData.data.list)
-                        //let tree = that.filterArray(resData.data.list);
-                        //console.log(tree)
+                        that.options = that.setOptionsData(resData.data.list)
                     }
                 });
+        },
+        setOptionsData(list,pid){
+            pid = pid || '';
+            let filterData = list.filter((item)=>{
+                return item.pid == pid
+            })
+            filterData.forEach((item,index)=>{
+                item.children = this.setOptionsData(list,item._id)
+            })
+            return filterData;
         },
         getChildData(list, id) {
             return list.filter((item) => {

@@ -57,9 +57,7 @@
                     <el-input v-model="item.title" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="类型" label-width="80px">
-                    <el-select v-model="item.typeId" placeholder="请选择文章类型">
-                        <el-option :label="type.name" :value="type._id" v-for="(type, index) in typeList" :key="index"></el-option>
-                    </el-select>
+                    <el-cascader v-model="item.typeId" :options="options" :props="{value:'_id',label:'name', checkStrictly: true }" clearable></el-cascader>
                 </el-form-item>
                 <el-form-item label="标签" label-width="80px">
                     <el-select v-model="item.tagId" placeholder="请选择文章标签">
@@ -82,6 +80,7 @@
 export default {
     data() {
         return {
+            options: [],
             pageIndex: 1,
             pageSize: 10,
             total: 0,
@@ -142,9 +141,21 @@ export default {
                 .then(function (response) {
                     return response.json();
                 })
-                .then(function (res) {
-                    that.typeList = res.data.list
+                .then(function (resData) {
+                    if (resData.code == 0) {
+                        that.options = that.setOptionsData(resData.data.list)
+                    }
                 });
+        },
+        setOptionsData(list){
+            pid = pid || '';
+            let filterData = list.filter((item)=>{
+                return item.pid == pid
+            })
+            filterData.forEach((item,index)=>{
+                item.children = this.setOptionsData(list,item._id)
+            })
+            return filterData;
         },
         /**
          * 搜索按钮
