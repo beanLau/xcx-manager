@@ -21,6 +21,10 @@
             </el-table-column>
             <el-table-column prop="tagName" label="标签">
             </el-table-column>
+            <el-table-column prop="readCount" label="阅读量">
+            </el-table-column>
+            <el-table-column prop="likeCount" label="喜欢量">
+            </el-table-column>
             <el-table-column prop="enable" label="状态">
                 <template slot-scope="scope">
                     <el-tag effect="plain" size="mini">
@@ -142,7 +146,6 @@ export default {
                 .then(function (resData) {
                     if (resData.code == 0) {
                         that.options = that.setOptionsData(resData.data.list,'')
-                        console.log(that.options)
                     }
                 });
         },
@@ -161,11 +164,17 @@ export default {
          */
         toSearch() {
             let that = this;
+            let typeId = that.formInline.typeId;
+            if(typeId.length > 0){
+                typeId = typeId[typeId.length - 1]
+            }else{
+                typeId = ''
+            }
             fetch('http://localhost:3000/findArticles', {
                 method: 'POST',
                 body: JSON.stringify({
                     title: that.formInline.title,
-                    typeId: that.formInline.typeId,
+                    typeId: typeId,
                     pageIndex: that.pageIndex,
                     pageSize: that.pageSize
                 }),
@@ -268,6 +277,11 @@ export default {
         saveCb() {
             let that = this;
             let item = this.item;
+            if(item.typeId){
+                item.typeId = item.typeId[item.typeId.length-1 || 0]
+            }else{
+                item.typeId = ''
+            }
             fetch('http://localhost:3000/addUpdateArticle', {
                 method: 'POST',
                 body: JSON.stringify(item),
