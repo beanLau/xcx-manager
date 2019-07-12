@@ -67,7 +67,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="内容" label-width="80px">
-                    <mavon-editor v-model="item.content" />
+                    <mavon-editor v-model="item.content" @imgAdd="imgAdd" ref="md"/>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -296,6 +296,25 @@ export default {
                     if (resData.code == 0) {
                         that.dialogFormVisible = false;
                         that.toSearch();
+                    }
+                });
+        },
+        imgAdd(pos, $file){
+            let that = this;
+            // 第一步.将图片上传到服务器.
+           var formdata = new FormData();
+           formdata.append('file', $file);
+
+           fetch('http://localhost:3000/upload', {
+                method: 'POST',
+                body: formdata
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (resData) {
+                    if (resData.code == 0) {
+                        that.$refs.md.$img2Url(pos, resData.data.url);
                     }
                 });
         }
