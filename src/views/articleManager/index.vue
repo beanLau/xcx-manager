@@ -53,13 +53,19 @@
                 <el-button type="primary" @click="confirmDelete">确 定</el-button>
             </span>
         </el-dialog>
-        <el-dialog :title="isAdd ? '新增':'修改'" :visible.sync="dialogFormVisible">
+        <el-dialog :title="isAdd ? '新增':'修改'" :visible.sync="dialogFormVisible" width="80%">
             <el-form :model="item">
                 <el-form-item label="标题" label-width="80px">
                     <el-input v-model="item.title" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="类型" label-width="80px">
                     <el-cascader v-model="item.typeId" :options="options" :props="{value:'_id',label:'name', checkStrictly: true }" clearable></el-cascader>
+                </el-form-item>
+                <el-form-item label="图标" label-width="80px">
+                    <el-upload class="avatar-uploader" action="http://localhost:3000/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
                 </el-form-item>
                 <el-form-item label="标签" label-width="80px">
                     <el-select v-model="item.tagId" placeholder="请选择文章标签">
@@ -85,6 +91,7 @@ export default {
             options: [],
             pageIndex: 1,
             pageSize: 10,
+            imageUrl: '',
             total: 0,
             isAdd: true,
             item: {
@@ -229,7 +236,7 @@ export default {
          */
         editCb(item) {
             this.item = Object.assign({}, item);
-            console.log(item)
+            this.imageUrl = item.url;
             this.isAdd = false;
             this.dialogFormVisible = true;
         },
@@ -268,6 +275,7 @@ export default {
          */
         addArticle() {
             this.item = {};
+            this.imageUrl = '';
             this.isAdd = true;
             this.dialogFormVisible = true;
         },
@@ -277,6 +285,7 @@ export default {
         saveCb() {
             let that = this;
             let item = this.item;
+            item.url = that.imageUrl;
             if(item.typeId){
                 item.typeId = item.typeId[item.typeId.length-1 || 0]
             }else{
@@ -317,6 +326,27 @@ export default {
                         that.$refs.md.$img2Url(pos, resData.data.url);
                     }
                 });
+        },
+        /**
+        * 图片上传成功回调
+        */
+        handleAvatarSuccess(res, file) {
+            this.imageUrl = res.data.url
+        },
+        /**
+        * 上传前控制
+        */
+        beforeAvatarUpload(file) {
+            const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isJPG) {
+                this.$message.error('上传头像图片只能是 JPG 格式!');
+            }
+            if (!isLt2M) {
+                this.$message.error('上传头像图片大小不能超过 2MB!');
+            }
+            return isJPG && isLt2M;
         }
     }
 }
@@ -326,5 +356,32 @@ export default {
 .pagination-wrap {
   text-align: right;
   margin-top: 20px;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 160px;
+  height: 160px;
+  line-height: 160px;
+  text-align: center;
+}
+.avatar {
+  width: 160px;
+  height: 160px;
+  display: block;
+}
+.type-icon{
+    width: 36px;
+    height: 36px;
 }
 </style>

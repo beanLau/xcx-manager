@@ -8,6 +8,7 @@ import Soul from '../views/soulManager/index.vue'
 import Question from '../views/questionManager/index.vue'
 import Tag from '../views/tagManager/index.vue'
 import Type from '../views/typeManager/index.vue'
+import Login from '../views/login/index.vue'
 
 Vue.use(Router)
 
@@ -15,6 +16,13 @@ export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
+    {
+      path: '/login',
+      name: "Login",
+      components : {
+        content: Login
+      }
+    },
     {
       path: '/',
       name: 'Home',
