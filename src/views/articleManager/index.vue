@@ -62,7 +62,7 @@
                     <el-cascader v-model="item.typeId" :options="options" :props="{value:'_id',label:'name', checkStrictly: true }" clearable></el-cascader>
                 </el-form-item>
                 <el-form-item label="图标" label-width="80px">
-                    <el-upload class="avatar-uploader" action="http://localhost:3000/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                    <el-upload class="avatar-uploader" action="/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                         <img v-if="imageUrl" :src="imageUrl" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
@@ -85,6 +85,7 @@
 </template>
 
 <script>
+import { getArticle } from "@/apis/article"
 export default {
     data() {
         return {
@@ -128,7 +129,7 @@ export default {
          */
         initSelectData() {
             let that = this;
-            fetch('http://localhost:3000/findAllTags', {
+            fetch('/findAllTags', {
                 method: 'POST',
                 headers: new Headers({
                     'Content-Type': 'application/json'
@@ -141,7 +142,7 @@ export default {
                     that.tagList = res.data.list
                 });
 
-            fetch('http://localhost:3000/findAllTypes', {
+            fetch('/findAllTypes', {
                 method: 'POST',
                 headers: new Headers({
                     'Content-Type': 'application/json'
@@ -169,7 +170,7 @@ export default {
         /**
          * 搜索按钮
          */
-        toSearch() {
+        async toSearch() {
             let that = this;
             let typeId = that.formInline.typeId;
             if(typeId.length > 0){
@@ -177,27 +178,16 @@ export default {
             }else{
                 typeId = ''
             }
-            fetch('http://localhost:3000/findArticles', {
-                method: 'POST',
-                body: JSON.stringify({
-                    title: that.formInline.title,
-                    typeId: typeId,
-                    pageIndex: that.pageIndex,
-                    pageSize: that.pageSize
-                }),
-                headers: new Headers({
-                    'Content-Type': 'application/json'
-                })
-            })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (res) {
-                    if (res.code == 0) {
-                        that.tableData = res.data.list
-                        that.total = res.data.total
-                    }
-                });
+            const res = getArticle(JSON.stringify({
+                title: that.formInline.title,
+                typeId: typeId,
+                pageIndex: that.pageIndex,
+                pageSize: that.pageSize
+            }))
+            if (res.code == 0) {
+                that.tableData = res.data.list
+                that.total = res.data.total
+            }
         },
         /**
          * 分页点击回调
@@ -212,7 +202,7 @@ export default {
         enableCb(item) {
             let that = this;
             that.dialogVisible = false;
-            fetch('http://localhost:3000/enableArticle', {
+            fetch('/enableArticle', {
                 method: 'POST',
                 body: JSON.stringify({
                     _id: item._id,
@@ -247,7 +237,7 @@ export default {
             let that = this;
             let item = this.item;
             that.dialogVisible = false;
-            fetch('http://localhost:3000/deleteArticle', {
+            fetch('/deleteArticle', {
                 method: 'POST',
                 body: JSON.stringify(item),
                 headers: new Headers({
@@ -291,7 +281,7 @@ export default {
             }else{
                 item.typeId = ''
             }
-            fetch('http://localhost:3000/addUpdateArticle', {
+            fetch('/addUpdateArticle', {
                 method: 'POST',
                 body: JSON.stringify(item),
                 headers: new Headers({
@@ -314,7 +304,7 @@ export default {
            var formdata = new FormData();
            formdata.append('file', $file);
 
-           fetch('http://localhost:3000/upload', {
+           fetch('/upload', {
                 method: 'POST',
                 body: formdata
             })
