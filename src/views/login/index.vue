@@ -6,9 +6,7 @@
                     <h3>Login to our site</h3>
                     <p>Enter your username and password to log on:</p>
                 </div>
-                <div class="form-top-right">
-                    <i class="fa fa-key"></i>
-                </div>
+                <img class="form-top-right" src="../../assets/unlocking.png" alt="">
             </div>
             <div class="form-body">
                 <div>
@@ -94,6 +92,7 @@ export default {
 .form-top{
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 25px;
     background-color: #fff;
     border-radius: 10px 10px 0 0;
@@ -108,6 +107,10 @@ export default {
     margin-top: 20px;
     font-size: 14px;
     color: #666;
+}
+.form-top-right{
+    width: 66px;
+    height: 66px;
 }
 .form-body{
     padding: 25px;
