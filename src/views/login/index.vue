@@ -10,12 +10,12 @@
             </div>
             <div class="form-body">
                 <div>
-                    <input type="text" placeholder="Username...">
+                    <input type="text" placeholder="Username..." v-model="username">
                 </div>
                 <div>
-                    <input type="password" name="" id="" placeholder="Password...">
+                    <input type="password" name="" id="" placeholder="Password..." v-model="password">
                 </div>
-                <div class="login-btn">coding</div>
+                <div class="login-btn" @click="toLogin">coding</div>
             </div>
         </div>
         <div class="page-bg"></div>
@@ -23,11 +23,12 @@
 </template>
 
 <script>
+import { toLogin } from "@/apis/login"
 export default {
     data() {
         return {
-            username: 1,
-            password: 10
+            username: "",
+            password: ""
         }
     },
 
@@ -41,31 +42,19 @@ export default {
         //this.toSearch();
     },
     methods: {
-        /**
-         * 搜索按钮
-         */
-        toSearch() {
-            let that = this;
-            fetch('http://localhost:3000/findTags', {
-                method: 'POST',
-                body: JSON.stringify({
-                    name: that.formInline.searchName,
-                    pageIndex: that.pageIndex,
-                    pageSize: that.pageSize
-                }),
-                headers: new Headers({
-                    'Content-Type': 'application/json'
-                })
+        async toLogin() {
+            if(!this.username || !this.password){
+                this.$message.error('请输入用户名或密码');
+                return
+            }
+            let { code,data,msg } = await toLogin({
+                username: this.username,
+                password: this.password
             })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (res) {
-                    if(res.code == 0){
-                        that.tableData = res.data.list
-                        that.total = res.data.total
-                    }
-                });
+            if(code == 0){
+                localStorage.setItem("Authorization",data.token);
+            }
+            this.$router.push('/')
         }
     }
 }
