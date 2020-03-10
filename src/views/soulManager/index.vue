@@ -87,7 +87,7 @@ export default {
      */
     toSearch() {
       let that = this;
-      fetch("http://localhost:3000/findSouls", {
+      fetch("/findSouls", {
         method: "POST",
         body: JSON.stringify({
           content: that.formInline.searchName,
@@ -134,7 +134,7 @@ export default {
       let that = this;
       let item = this.item;
       that.dialogVisible = false;
-      fetch("http://localhost:3000/deleteSoul", {
+      fetch("/deleteSoul", {
         method: "POST",
         body: JSON.stringify(item),
         headers: new Headers({
@@ -171,7 +171,7 @@ export default {
     saveCb() {
       let that = this;
       let item = that.item;
-      fetch("http://localhost:3000/addUpdateSoul", {
+      fetch("/addUpdateSoul", {
         method: "POST",
         body: JSON.stringify(item),
         headers: new Headers({
@@ -193,7 +193,7 @@ export default {
      */
     isTopCb(item) {
       let that = this;
-      fetch("http://localhost:3000/isTopSoul", {
+      fetch("/isTopSoul", {
         method: "POST",
         body: JSON.stringify({
             _id: item._id,

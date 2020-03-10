@@ -96,7 +96,7 @@ export default {
          */
         toSearch() {
             let that = this;
-            fetch('http://localhost:3000/findUsers', {
+            fetch('/findUsers', {
                 method: 'POST',
                 body: JSON.stringify({
                     userName: that.formInline.searchName,
@@ -145,7 +145,7 @@ export default {
             let that = this;
             let item = this.item;
             that.dialogVisible = false;
-            fetch('http://localhost:3000/deleteUser', {
+            fetch('/deleteUser', {
                 method: 'POST',
                 body: JSON.stringify(item),
                 headers: new Headers({
@@ -182,7 +182,7 @@ export default {
         saveCb() {
             let that = this;
             let item = that.item;
-            fetch('http://localhost:3000/addUpdateUser', {
+            fetch('/addUpdateUser', {
                 method: 'POST',
                 body: JSON.stringify(item),
                 headers: new Headers({

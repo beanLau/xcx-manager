@@ -178,7 +178,7 @@ export default {
             }else{
                 typeId = ''
             }
-            const res = getArticle(JSON.stringify({
+            const res = await getArticle(JSON.stringify({
                 title: that.formInline.title,
                 typeId: typeId,
                 pageIndex: that.pageIndex,

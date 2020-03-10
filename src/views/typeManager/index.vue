@@ -48,7 +48,7 @@
                     <el-cascader v-model="item.pid" :options="options" :props="{value:'_id',label:'name', checkStrictly: true }" clearable></el-cascader>
                 </el-form-item>
                 <el-form-item label="图标" label-width="80px">
-                    <el-upload class="avatar-uploader" action="http://localhost:3000/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                    <el-upload class="avatar-uploader" action="/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                         <img v-if="imageUrl" :src="imageUrl" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
@@ -101,7 +101,7 @@ export default {
          */
         toSearch() {
             let that = this;
-            fetch('http://localhost:3000/findTypes', {
+            fetch('/findTypes', {
                 method: 'POST',
                 body: JSON.stringify({
                     name: that.formInline.searchName,
@@ -152,7 +152,7 @@ export default {
             let that = this;
             let item = this.item;
             that.dialogVisible = false;
-            fetch('http://localhost:3000/deleteType', {
+            fetch('/deleteType', {
                 method: 'POST',
                 body: JSON.stringify(item),
                 headers: new Headers({
@@ -201,7 +201,7 @@ export default {
             }else{
                 item.pid = ''
             }
-            fetch('http://localhost:3000/addUpdateType', {
+            fetch('/addUpdateType', {
                 method: 'POST',
                 body: JSON.stringify(item),
                 headers: new Headers({
@@ -220,7 +220,7 @@ export default {
         },
         initSelectData() {
             let that = this;
-            fetch('http://localhost:3000/findAllTypes', {
+            fetch('/findAllTypes', {
                 method: 'POST',
                 headers: new Headers({
                     'Content-Type': 'application/json'
@@ -273,7 +273,7 @@ export default {
         },
         load(tree,treeNode,resolve){
             let that = this;
-            fetch('http://localhost:3000/findTypesByPid', {
+            fetch('/findTypesByPid', {
                 method: 'POST',
                 body: JSON.stringify({
                     pid: tree._id

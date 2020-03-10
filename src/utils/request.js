@@ -1,7 +1,7 @@
 import axios from "axios"
 import { Message } from "element-ui"
 let instance = axios.create({
-    baseURL: '/api',
+    baseURL: '/',
     timeout: 60000,
     headers: {'Authorization': localStorage.getItem("Authorization")}
 });

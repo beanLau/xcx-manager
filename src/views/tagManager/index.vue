@@ -90,7 +90,7 @@ export default {
          */
         toSearch() {
             let that = this;
-            fetch('http://localhost:3000/findTags', {
+            fetch('/findTags', {
                 method: 'POST',
                 body: JSON.stringify({
                     name: that.formInline.searchName,
@@ -139,7 +139,7 @@ export default {
             let that = this;
             let item = this.item;
             that.dialogVisible = false;
-            fetch('http://localhost:3000/deleteTag', {
+            fetch('/deleteTag', {
                 method: 'POST',
                 body: JSON.stringify(item),
                 headers: new Headers({
@@ -176,7 +176,7 @@ export default {
         saveCb() {
             let that = this;
             let item = that.item;
-            fetch('http://localhost:3000/addUpdateTag', {
+            fetch('/addUpdateTag', {
                 method: 'POST',
                 body: JSON.stringify(item),
                 headers: new Headers({

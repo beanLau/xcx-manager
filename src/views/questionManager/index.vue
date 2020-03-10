@@ -167,7 +167,7 @@ export default {
          */
         initSelectData() {
             let that = this;
-            fetch('http://localhost:3000/findAllTypes', {
+            fetch('/findAllTypes', {
                 method: 'POST',
                 headers: new Headers({
                     'Content-Type': 'application/json'
@@ -203,7 +203,7 @@ export default {
             } else {
                 typeId = ''
             }
-            fetch('http://localhost:3000/findQuestions', {
+            fetch('/findQuestions', {
                 method: 'POST',
                 body: JSON.stringify({
                     title: that.formInline.title,
@@ -238,7 +238,7 @@ export default {
         enableCb(item) {
             let that = this;
             that.dialogVisible = false;
-            fetch('http://localhost:3000/enableQuestion', {
+            fetch('/enableQuestion', {
                 method: 'POST',
                 body: JSON.stringify({
                     _id: item._id,
@@ -273,7 +273,7 @@ export default {
             let that = this;
             let item = this.item;
             that.dialogVisible = false;
-            fetch('http://localhost:3000/deleteQuestion', {
+            fetch('/deleteQuestion', {
                 method: 'POST',
                 body: JSON.stringify(item),
                 headers: new Headers({
@@ -315,7 +315,7 @@ export default {
             } else {
                 item.typeId = ''
             }
-            fetch('http://localhost:3000/addUpdateQuestion', {
+            fetch('/addUpdateQuestion', {
                 method: 'POST',
                 body: JSON.stringify(item),
                 headers: new Headers({
