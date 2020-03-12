@@ -191,7 +191,7 @@ export default {
             let that = this;
             const res = await findAllTypes()
             if (res.code == 0) {
-                that.options = that.setOptionsData(resData.data.list, '')
+                that.options = that.setOptionsData(res.data.list, '')
             }
         },
         setOptionsData(list, pid) {
