@@ -1,30 +1,76 @@
-import axios from "axios"
-import { Message } from "element-ui"
-let instance = axios.create({
-    baseURL: '/',
-    timeout: 60000,
-    headers: {'Authorization': localStorage.getItem("Authorization")}
-});
-// 添加请求拦截器
-instance.interceptors.request.use(function (config) {
-    // 在发送请求之前做些什么
-    console.log(config)
-    return config;
-  }, function (error) {
-    // 对请求错误做些什么
-    return Promise.reject(error);
-  });
-
-// 添加响应拦截器
-instance.interceptors.response.use(function (response) {
-    // 对响应数据做点什么
-    let data = response.data;
-    if(data.code !== 0){
-      Message(data.msg)
+import axios from "axios";
+import { Message } from "element-ui";
+import { getCookie, setCookie } from "./utils";
+import { downLoadFile } from "@/utils/utils";
+function zdAxios(options) {
+  return new Promise((resolve, reject) => {
+    let reqData = options.data;
+    for (let key in reqData) {
+      if (reqData[key] === "") {
+        delete reqData[key];
+      }
+      // reqData[key].replace(" ", "");
     }
-    return response.data;
-  }, function (error) {
-    // 对响应错误做点什么
-    return Promise.reject(error);
+    //removeSpace(reqData);
+    options.data = reqData;
+    //网络请求
+    axios({
+      url: `${process.env.VUE_APP_BASE_API || ""}${options.url}`,
+      method: options.method || "POST",
+      headers: {
+        "Content-Type": options.contentType || "application/json",
+        Authorization: "Bearer " + localStorage.getItem("Authorization") || ""
+      },
+      data: options.contentType
+        ? options.data
+        : JSON.stringify(options.data || {}),
+      responseType: options.responseType || "json"
+    }).then(res => {
+      //如果后台响应的是流数据，进行下载。
+      if (res.headers["content-type"].indexOf("octet-stream") != -1) {
+        let fileName = res.headers["content-disposition"].split("=");
+        fileName = fileName[fileName.length - 1];
+        fileName = fileName.replace(/"/g, "");
+        res.fileName = fileName;
+        downLoadFile(res);
+        resolve(res);
+      } else {
+        if (res.data.code != 0) {
+          Message({
+            message: res.data.msg || "error",
+            type: "error",
+            duration: 5 * 1000
+          });
+          //如果登录失效
+          if (res.data.code === 401 || res.data.code === 5) {
+            window.location.href = "/login";
+            // if (!getCookie("needLogin")) {
+            //   window.open("http://localadmin.wangxiao.cn/login.aspx");
+            //   setCookie("needLogin", true, 10000);
+            // }
+          }
+          reject(res.data);
+        } else {
+          resolve(res.data);
+        }
+      }
+    });
   });
-export default instance
+}
+zdAxios.post = function(url, data, responseType) {
+  return zdAxios({
+    method: "POST",
+    url: url,
+    data: data,
+    responseType: responseType
+  });
+};
+zdAxios.get = function(url, data, responseType) {
+  return zdAxios({
+    method: "GET",
+    url: url,
+    data: data,
+    responseType: responseType
+  });
+};
+export default zdAxios;

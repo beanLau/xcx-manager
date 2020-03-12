@@ -73,7 +73,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="内容" label-width="80px">
-                    <mavon-editor v-model="item.content" @imgAdd="imgAdd" ref="md"/>
+                    <mavon-editor v-model="item.content" @imgAdd="imgAdd" ref="md" />
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -85,7 +85,8 @@
 </template>
 
 <script>
-import { getArticle } from "@/apis/article"
+import { getArticle,enableArticle,deleteArticle, findAllTags, findAllTypes, addUpdateArticle  } from "@/apis/article"
+import { uploadFile } from "@/apis/utils"
 export default {
     data() {
         return {
@@ -127,43 +128,25 @@ export default {
         /**
          * 初始化下拉框数据
          */
-        initSelectData() {
+        async initSelectData() {
             let that = this;
-            fetch('/findAllTags', {
-                method: 'POST',
-                headers: new Headers({
-                    'Content-Type': 'application/json'
-                })
-            })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (res) {
-                    that.tagList = res.data.list
-                });
+            const res = await findAllTags()
+            if (res.code == 0) {
+                that.tagList = res.data.list
+            }
 
-            fetch('/findAllTypes', {
-                method: 'POST',
-                headers: new Headers({
-                    'Content-Type': 'application/json'
-                })
-            })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (resData) {
-                    if (resData.code == 0) {
-                        that.options = that.setOptionsData(resData.data.list,'')
-                    }
-                });
+            const res2 = await findAllTypes()
+            if (res2.code == 0) {
+                that.options = that.setOptionsData(res2.data.list, '')
+            }
         },
-        setOptionsData(list,pid){
+        setOptionsData(list, pid) {
             pid = pid || '';
-            let filterData = list.filter((item)=>{
+            let filterData = list.filter((item) => {
                 return item.pid == pid
             })
-            filterData.forEach((item,index)=>{
-                item.children = this.setOptionsData(list,item._id)
+            filterData.forEach((item, index) => {
+                item.children = this.setOptionsData(list, item._id)
             })
             return filterData;
         },
@@ -173,17 +156,17 @@ export default {
         async toSearch() {
             let that = this;
             let typeId = that.formInline.typeId;
-            if(typeId.length > 0){
+            if (typeId.length > 0) {
                 typeId = typeId[typeId.length - 1]
-            }else{
+            } else {
                 typeId = ''
             }
-            const res = await getArticle(JSON.stringify({
+            const res = await getArticle({
                 title: that.formInline.title,
                 typeId: typeId,
                 pageIndex: that.pageIndex,
                 pageSize: that.pageSize
-            }))
+            })
             if (res.code == 0) {
                 that.tableData = res.data.list
                 that.total = res.data.total
@@ -199,27 +182,16 @@ export default {
         /**
          * 启用禁用回调
          */
-        enableCb(item) {
+        async enableCb(item) {
             let that = this;
             that.dialogVisible = false;
-            fetch('/enableArticle', {
-                method: 'POST',
-                body: JSON.stringify({
-                    _id: item._id,
-                    enable: item.enable ? false:true
-                }),
-                headers: new Headers({
-                    'Content-Type': 'application/json'
-                })
+            const res = await enableArticle({
+                _id: item._id,
+                enable: item.enable ? false : true
             })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (resData) {
-                    if (resData.code == 0) {
-                        that.toSearch();
-                    }
-                });
+            if (res.code == 0) {
+                that.toSearch();
+            }
         },
         /**
          * 修改按钮回调
@@ -233,25 +205,14 @@ export default {
         /**
          * 确认删除
          */
-        confirmDelete(e) {
+        async confirmDelete(e) {
             let that = this;
             let item = this.item;
             that.dialogVisible = false;
-            fetch('/deleteArticle', {
-                method: 'POST',
-                body: JSON.stringify(item),
-                headers: new Headers({
-                    'Content-Type': 'application/json'
-                })
-            })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (resData) {
-                    if (resData.code == 0) {
-                        that.toSearch();
-                    }
-                });
+            const res = await deleteArticle(item)
+            if (res.code == 0) {
+                that.toSearch();
+            }
         },
         /**
          * 点击列表删除按钮回调
@@ -272,50 +233,32 @@ export default {
         /**
          * 新增修改保存
          */
-        saveCb() {
+        async saveCb() {
             let that = this;
             let item = this.item;
             item.url = that.imageUrl;
-            if(item.typeId){
-                item.typeId = item.typeId[item.typeId.length-1 || 0]
-            }else{
+            if (item.typeId) {
+                item.typeId = item.typeId[item.typeId.length - 1 || 0]
+            } else {
                 item.typeId = ''
             }
-            fetch('/addUpdateArticle', {
-                method: 'POST',
-                body: JSON.stringify(item),
-                headers: new Headers({
-                    'Content-Type': 'application/json'
-                })
-            })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (resData) {
-                    if (resData.code == 0) {
-                        that.dialogFormVisible = false;
-                        that.toSearch();
-                    }
-                });
+
+            const res = await addUpdateArticle(item)
+            if (res.code == 0) {
+                that.dialogFormVisible = false;
+                that.toSearch();
+            }
         },
-        imgAdd(pos, $file){
+        async imgAdd(pos, $file) {
             let that = this;
             // 第一步.将图片上传到服务器.
-           var formdata = new FormData();
-           formdata.append('file', $file);
+            var formdata = new FormData();
+            formdata.append('file', $file);
 
-           fetch('/upload', {
-                method: 'POST',
-                body: formdata
-            })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (resData) {
-                    if (resData.code == 0) {
-                        that.$refs.md.$img2Url(pos, resData.data.url);
-                    }
-                });
+            const res = await uploadFile(formdata)
+            if (res.code == 0) {
+                that.$refs.md.$img2Url(pos, resData.data.url);
+            }
         },
         /**
         * 图片上传成功回调
@@ -370,8 +313,8 @@ export default {
   height: 160px;
   display: block;
 }
-.type-icon{
-    width: 36px;
-    height: 36px;
+.type-icon {
+  width: 36px;
+  height: 36px;
 }
 </style>
