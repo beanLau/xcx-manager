@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import { findTags, deleteTag, addUpdateTag } from "@/apis/tag"
+
 export default {
     data() {
         return {
@@ -88,28 +90,17 @@ export default {
         /**
          * 搜索按钮
          */
-        toSearch() {
+        async toSearch() {
             let that = this;
-            fetch('/findTags', {
-                method: 'POST',
-                body: JSON.stringify({
-                    name: that.formInline.searchName,
-                    pageIndex: that.pageIndex,
-                    pageSize: that.pageSize
-                }),
-                headers: new Headers({
-                    'Content-Type': 'application/json'
-                })
+            const res = await findTags({
+                name: that.formInline.searchName,
+                pageIndex: that.pageIndex,
+                pageSize: that.pageSize
             })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (res) {
-                    if(res.code == 0){
-                        that.tableData = res.data.list
-                        that.total = res.data.total
-                    }
-                });
+            if (res.code == 0) {
+                that.tableData = res.data.list
+                that.total = res.data.total
+            }
         },
         /**
          * 分页点击回调
@@ -128,7 +119,7 @@ export default {
          * 修改按钮回调
          */
         editCb(item) {
-            this.item =  Object.assign({},item);
+            this.item = Object.assign({}, item);
             this.isAdd = false;
             this.dialogFormVisible = true;
         },
@@ -139,21 +130,10 @@ export default {
             let that = this;
             let item = this.item;
             that.dialogVisible = false;
-            fetch('/deleteTag', {
-                method: 'POST',
-                body: JSON.stringify(item),
-                headers: new Headers({
-                    'Content-Type': 'application/json'
-                })
-            })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (resData) {
-                    if (resData.code == 0) {
-                        that.toSearch();
-                    }
-                });
+            const res = await deleteTag(item)
+            if (res.code == 0) {
+                that.toSearch();
+            }
         },
         /**
          * 点击列表删除按钮回调
@@ -176,22 +156,11 @@ export default {
         saveCb() {
             let that = this;
             let item = that.item;
-            fetch('/addUpdateTag', {
-                method: 'POST',
-                body: JSON.stringify(item),
-                headers: new Headers({
-                    'Content-Type': 'application/json'
-                })
-            })
-                .then(function (response) {
-                    return response.json();
-                })
-                .then(function (resData) {
-                    if(resData.code == 0){
-                        that.dialogFormVisible = false;
-                        that.toSearch();
-                    }
-                });
+            const res = await addUpdateTag(item)
+            if (res.code == 0) {
+                that.dialogFormVisible = false;
+                that.toSearch();
+            }
         }
     }
 }

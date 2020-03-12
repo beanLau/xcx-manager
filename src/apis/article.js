@@ -23,3 +23,6 @@ export function findAllTags(query){
 export function findAllTypes(query){
     return request.post("findAllTypes",query);
 }
+export function findAllSpecials(query){
+    return request.post("findAllSpecials",query);
+}

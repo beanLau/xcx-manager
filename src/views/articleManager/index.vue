@@ -61,7 +61,7 @@
                 <el-form-item label="类型" label-width="80px">
                     <el-cascader v-model="item.typeId" :options="options" :props="{value:'_id',label:'name', checkStrictly: true }" clearable></el-cascader>
                 </el-form-item>
-                <el-form-item label="图标" label-width="80px">
+                <el-form-item label="封面图" label-width="80px">
                     <el-upload class="avatar-uploader" action="/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                         <img v-if="imageUrl" :src="imageUrl" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { getArticle,enableArticle,deleteArticle, findAllTags, findAllTypes, addUpdateArticle  } from "@/apis/article"
+import { getArticle,enableArticle,deleteArticle, findAllTags, findAllTypes, findAllSpecials, addUpdateArticle  } from "@/apis/article"
 import { uploadFile } from "@/apis/utils"
 export default {
     data() {
@@ -110,6 +110,7 @@ export default {
             },
             tagList: [],
             typeList: [],
+            specialList: [],
             tableData: []
         }
     },
@@ -138,6 +139,11 @@ export default {
             const res2 = await findAllTypes()
             if (res2.code == 0) {
                 that.options = that.setOptionsData(res2.data.list, '')
+            }
+
+            const res3 = await findAllSpecials()
+            if (res3.code == 0) {
+                that.specialList = that.setOptionsData(res3.data.list, '')
             }
         },
         setOptionsData(list, pid) {

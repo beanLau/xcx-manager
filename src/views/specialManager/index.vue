@@ -6,19 +6,23 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="toSearch" icon="el-icon-search" size="small">搜索</el-button>
-                <el-button type="primary" @click="addType" size="small">新增</el-button>
+                <el-button type="primary" @click="addSpecial" size="small">新增</el-button>
             </el-form-item>
         </el-form>
-        <el-table :data="tableData" row-key="_id" border style="width: 100%" :load="load" lazy :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+        <el-table :data="tableData" border style="width: 100%">
             <el-table-column type="index" width="50">
             </el-table-column>
             <el-table-column prop="name" label="标题">
             </el-table-column>
-            <el-table-column prop="enable" label="图标">
-                <template slot-scope="scope">
-                    <img :src="scope.row.url" alt="" class="type-icon">
-                </template>
+            <el-table-column prop="desc" label="描述">
             </el-table-column>
+            <!-- <el-table-column prop="enable" label="状态">
+                <template slot-scope="scope">
+                    <el-tag effect="plain" size="mini">
+                        {{ scope.row.enable ? '已启用':'已禁用' }}
+                    </el-tag>
+                </template>
+            </el-table-column> -->
             <el-table-column sortable prop="created_at" label="日期">
             </el-table-column>
             <el-table-column label="操作" width="300">
@@ -44,14 +48,8 @@
                 <el-form-item label="标题" label-width="80px">
                     <el-input v-model="item.name" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="父级" label-width="80px">
-                    <el-cascader v-model="item.pid" :options="options" :props="{value:'_id',label:'name', checkStrictly: true }" clearable></el-cascader>
-                </el-form-item>
-                <el-form-item label="图标" label-width="80px">
-                    <el-upload class="avatar-uploader" action="/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                    </el-upload>
+                <el-form-item label="描述" label-width="80px">
+                    <el-input v-model="item.desc" autocomplete="off"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -63,20 +61,18 @@
 </template>
 
 <script>
-import { findTypes, deleteType, addUpdateType, findAllTypes, findTypesByPid } from "@/apis/type"
+import { findSpecials, deleteSpecial, addUpdateSpecial } from "@/apis/special"
+
 export default {
     data() {
         return {
-            options: [],
-            imageUrl: '',
             pageIndex: 1,
             pageSize: 10,
             total: 0,
             isAdd: true,
             item: {
                 name: '',
-                url: '',
-                pid: ''
+                desc: ""
             },
             dialogFormVisible: false,
             dialogVisible: false,
@@ -102,7 +98,7 @@ export default {
          */
         async toSearch() {
             let that = this;
-            const res = await findTypes({
+            const res = await findSpecials({
                 name: that.formInline.searchName,
                 pageIndex: that.pageIndex,
                 pageSize: that.pageSize
@@ -111,7 +107,6 @@ export default {
                 that.tableData = res.data.list
                 that.total = res.data.total
             }
-
         },
         /**
          * 分页点击回调
@@ -130,20 +125,18 @@ export default {
          * 修改按钮回调
          */
         editCb(item) {
-            this.initSelectData();
             this.item = Object.assign({}, item);
-            this.imageUrl = item.url;
             this.isAdd = false;
             this.dialogFormVisible = true;
         },
         /**
          * 确认删除
          */
-        async confirmDelete(e) {
+        confirmDelete(e) {
             let that = this;
             let item = this.item;
             that.dialogVisible = false;
-            const res = await deleteType(item)
+            const res = await deleteSpecial(item)
             if (res.code == 0) {
                 that.toSearch();
             }
@@ -158,85 +151,21 @@ export default {
         /**
          * 新增文章
          */
-        addType() {
+        addSpecial() {
             this.item = {};
             this.isAdd = true;
-            this.imageUrl = '';
             this.dialogFormVisible = true;
-            this.initSelectData();
         },
         /**
          * 新增修改保存
          */
         saveCb() {
             let that = this;
-            if (!that.imageUrl) { //如果没有上传图片
-                this.$message.error('请上传类别图标！');
-                return
-            }
             let item = that.item;
-            item.url = that.imageUrl;
-            if (item.pid) {
-                item.pid = item.pid[item.pid.length - 1 || 0]
-            } else {
-                item.pid = ''
-            }
-            const res = await addUpdateType(item)
+            const res = await addUpdateSpecial(item)
             if (res.code == 0) {
                 that.dialogFormVisible = false;
                 that.toSearch();
-            }
-        },
-        async initSelectData() {
-            let that = this;
-            const res = await findAllTypes()
-            if (res.code == 0) {
-                that.options = that.setOptionsData(resData.data.list, '')
-            }
-        },
-        setOptionsData(list, pid) {
-            pid = pid || '';
-            let filterData = list.filter((item) => {
-                return item.pid == pid
-            })
-            filterData.forEach((item, index) => {
-                item.children = this.setOptionsData(list, item._id)
-            })
-            return filterData;
-        },
-        getChildData(list, id) {
-            return list.filter((item) => {
-                return item.pid == id
-            })
-        },
-        /**
-        * 图片上传成功回调
-        */
-        handleAvatarSuccess(res, file) {
-            this.imageUrl = res.data.url
-        },
-        /**
-        * 上传前控制
-        */
-        beforeAvatarUpload(file) {
-            const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
-            const isLt2M = file.size / 1024 / 1024 < 2;
-
-            if (!isJPG) {
-                this.$message.error('上传头像图片只能是 JPG 格式!');
-            }
-            if (!isLt2M) {
-                this.$message.error('上传头像图片大小不能超过 2MB!');
-            }
-            return isJPG && isLt2M;
-        },
-        async load(tree, treeNode, resolve) {
-            let that = this;
-            const res = await findTypesByPid({
-                    pid: tree._id
-                })
-            if (res.code == 0) {
-                resolve(res.data.list)
             }
         }
     }
@@ -247,32 +176,5 @@ export default {
 .pagination-wrap {
   text-align: right;
   margin-top: 20px;
-}
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 80px;
-  height: 80px;
-  line-height: 80px;
-  text-align: center;
-}
-.avatar {
-  width: 80px;
-  height: 80px;
-  display: block;
-}
-.type-icon {
-  width: 36px;
-  height: 36px;
 }
 </style>
