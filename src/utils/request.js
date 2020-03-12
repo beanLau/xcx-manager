@@ -15,7 +15,7 @@ function zdAxios(options) {
     options.data = reqData;
     //网络请求
     axios({
-      url: `${process.env.VUE_APP_BASE_API || ""}${options.url}`,
+      url: `${process.env.VUE_APP_BASE_API || "/api/"}${options.url}`,
       method: options.method || "POST",
       headers: {
         "Content-Type": options.contentType || "application/json",
@@ -43,8 +43,8 @@ function zdAxios(options) {
           });
           //如果登录失效
           if (res.data.code === 401 || res.data.code === 5) {
-            reject(res.data);
-            //window.location.href = "/login";
+            //reject(res.data);
+            window.location.href = "/login";
             // if (!getCookie("needLogin")) {
             //   window.open("http://localadmin.wangxiao.cn/login.aspx");
             //   setCookie("needLogin", true, 10000);
