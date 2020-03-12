@@ -8,6 +8,7 @@ import Soul from '../views/soulManager/index.vue'
 import Question from '../views/questionManager/index.vue'
 import Tag from '../views/tagManager/index.vue'
 import Type from '../views/typeManager/index.vue'
+import Special from '../views/specialManager/index.vue'
 import Login from '../views/login/index.vue'
 
 Vue.use(Router)
@@ -51,6 +52,10 @@ export default new Router({
         {
           path: '/type',
           component: Type
+        },
+        {
+          path: '/special',
+          component: Special
         }
       ]
     }

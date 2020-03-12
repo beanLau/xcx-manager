@@ -97,6 +97,7 @@ export default {
          * 搜索按钮
          */
         async toSearch() {
+            console.log(1)
             let that = this;
             const res = await findSpecials({
                 name: that.formInline.searchName,
@@ -132,7 +133,7 @@ export default {
         /**
          * 确认删除
          */
-        confirmDelete(e) {
+        async confirmDelete(e) {
             let that = this;
             let item = this.item;
             that.dialogVisible = false;
@@ -159,7 +160,7 @@ export default {
         /**
          * 新增修改保存
          */
-        saveCb() {
+        async saveCb() {
             let that = this;
             let item = that.item;
             const res = await addUpdateSpecial(item)

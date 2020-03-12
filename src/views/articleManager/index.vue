@@ -72,6 +72,11 @@
                         <el-option :label="tag.name" :value="tag._id" v-for="(tag, index) in tagList" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="专题" label-width="80px">
+                    <el-select v-model="item.specialId" placeholder="请选择文章专题">
+                        <el-option :label="special.name" :value="special._id" v-for="(special, index) in specialList" :key="index"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="内容" label-width="80px">
                     <mavon-editor v-model="item.content" @imgAdd="imgAdd" ref="md" />
                 </el-form-item>
@@ -100,6 +105,7 @@ export default {
                 title: '',
                 typeId: '',
                 tagId: '',
+                specialId: '',
                 content: ''
             },
             dialogFormVisible: false,
@@ -142,8 +148,9 @@ export default {
             }
 
             const res3 = await findAllSpecials()
+            console.log(res3)
             if (res3.code == 0) {
-                that.specialList = that.setOptionsData(res3.data.list, '')
+                that.specialList = res3.data.list || []
             }
         },
         setOptionsData(list, pid) {

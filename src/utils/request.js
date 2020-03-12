@@ -43,7 +43,8 @@ function zdAxios(options) {
           });
           //如果登录失效
           if (res.data.code === 401 || res.data.code === 5) {
-            window.location.href = "/login";
+            reject(res.data);
+            //window.location.href = "/login";
             // if (!getCookie("needLogin")) {
             //   window.open("http://localadmin.wangxiao.cn/login.aspx");
             //   setCookie("needLogin", true, 10000);
@@ -57,20 +58,22 @@ function zdAxios(options) {
     });
   });
 }
-zdAxios.post = function(url, data, responseType) {
+zdAxios.post = function(url, data, responseType, contentType) {
   return zdAxios({
     method: "POST",
     url: url,
     data: data,
-    responseType: responseType
+    responseType: responseType,
+    contentType: contentType || ""
   });
 };
-zdAxios.get = function(url, data, responseType) {
+zdAxios.get = function(url, data, responseType, contentType) {
   return zdAxios({
     method: "GET",
     url: url,
     data: data,
-    responseType: responseType
+    responseType: responseType,
+    contentType: contentType || ""
   });
 };
 export default zdAxios;

@@ -1,10 +1,5 @@
-import request from "@/utils/request"
+import myReq from "@/utils/request"
 
-export function uploadFile(query) {
-    return request({
-        url: "/upload",
-        contentType: "multipart/form-data",
-        method: "post",
-        data: query
-    });
+export function uploadFile(query){
+    return myReq.post("upload",query,'','multipart/form-data');
 }

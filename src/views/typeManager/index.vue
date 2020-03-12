@@ -168,7 +168,7 @@ export default {
         /**
          * 新增修改保存
          */
-        saveCb() {
+        async saveCb() {
             let that = this;
             if (!that.imageUrl) { //如果没有上传图片
                 this.$message.error('请上传类别图标！');

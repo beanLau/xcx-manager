@@ -126,7 +126,7 @@ export default {
         /**
          * 确认删除
          */
-        confirmDelete(e) {
+        async confirmDelete(e) {
             let that = this;
             let item = this.item;
             that.dialogVisible = false;
@@ -153,7 +153,7 @@ export default {
         /**
          * 新增修改保存
          */
-        saveCb() {
+        async saveCb() {
             let that = this;
             let item = that.item;
             const res = await addUpdateTag(item)

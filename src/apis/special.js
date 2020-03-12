@@ -1,7 +1,7 @@
 import request from "@/utils/request"
 
-export function findSpecial(query){
-    return request.post("findSpecial",query);
+export function findSpecials(query){
+    return request.post("findSpecials",query);
 }
 export function deleteSpecial(query){
     return request.post("deleteSpecial",query);

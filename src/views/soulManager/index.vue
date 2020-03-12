@@ -159,7 +159,7 @@ export default {
     /**
      * 置顶取消置顶
      */
-    isTopCb(item) {
+    async isTopCb(item) {
       let that = this;
       const res = await isTopSoul({
         _id: item._id,
