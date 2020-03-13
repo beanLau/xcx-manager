@@ -270,7 +270,7 @@ export default {
 
             const res = await uploadFile(formdata)
             if (res.code == 0) {
-                that.$refs.md.$img2Url(pos, resData.data.url);
+                that.$refs.md.$img2Url(pos, res.data.url);
             }
         },
         /**
