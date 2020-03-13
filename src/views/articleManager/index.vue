@@ -17,15 +17,15 @@
             </el-table-column>
             <el-table-column prop="title" label="标题">
             </el-table-column>
-            <el-table-column prop="typeName" label="类型">
+            <el-table-column prop="typeName" label="类型" width="120">
             </el-table-column>
-            <el-table-column prop="tagName" label="标签">
+            <el-table-column prop="tagName" label="标签" width="120">
             </el-table-column>
-            <el-table-column prop="readCount" label="阅读量">
+            <el-table-column prop="readCount" label="阅读量" width="70">
             </el-table-column>
-            <el-table-column prop="likeCount" label="喜欢量">
+            <el-table-column prop="likeCount" label="喜欢量" width="70">
             </el-table-column>
-            <el-table-column prop="enable" label="状态">
+            <el-table-column prop="enable" label="状态" width="70">
                 <template slot-scope="scope">
                     <el-tag effect="plain" size="mini">
                         {{ scope.row.enable ? '已启用':'已禁用' }}
@@ -34,7 +34,7 @@
             </el-table-column>
             <el-table-column sortable prop="created_at" label="日期">
             </el-table-column>
-            <el-table-column label="操作" width="300">
+            <el-table-column label="操作" width="220">
                 <template slot-scope="scope">
                     <el-button @click="enableCb(scope.row)" type="primary" size="small">{{scope.row.enable ? '禁用':'启用'}}</el-button>
                     <el-button @click="editCb(scope.row)" type="primary" size="small">修改</el-button>
