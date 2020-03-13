@@ -21,9 +21,9 @@
                     </el-tag>
                 </template>
             </el-table-column> -->
-            <el-table-column sortable prop="created_at" label="日期">
+            <el-table-column sortable prop="created_at" label="日期" width="200">
             </el-table-column>
-            <el-table-column label="操作" width="300">
+            <el-table-column label="操作" width="160">
                 <template slot-scope="scope">
                     <el-button @click="editCb(scope.row)" type="primary" size="small">修改</el-button>
                     <el-button @click="deleteCb(scope.row)" type="primary" size="small">删除</el-button>

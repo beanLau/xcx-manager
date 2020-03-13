@@ -14,14 +14,14 @@
       </el-table-column>
       <el-table-column prop="content" label="内容">
       </el-table-column>
-      <el-table-column label="状态">
+      <el-table-column label="状态" width="80">
         <template slot-scope="scope">
           {{ scope.row.isTop ? '已置顶':'' }}
         </template>
       </el-table-column>
-      <el-table-column sortable prop="created_at" label="日期">
+      <el-table-column sortable prop="created_at" label="日期" width="220">
       </el-table-column>
-      <el-table-column label="操作" width="300">
+      <el-table-column label="操作" width="260">
         <template slot-scope="scope">
           <el-button @click="isTopCb(scope.row)" type="primary" size="small">{{scope.row.isTop ? '取消置顶':'置顶'}}</el-button>
           <el-button @click="editCb(scope.row)" type="primary" size="small">修改</el-button>
