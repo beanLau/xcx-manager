@@ -53,7 +53,7 @@
                 <el-button type="primary" @click="confirmDelete">确 定</el-button>
             </span>
         </el-dialog>
-        <el-dialog :title="isAdd ? '新增':'修改'" :visible.sync="dialogFormVisible" width="80%">
+        <el-dialog :title="isAdd ? '新增':'修改'" :visible.sync="dialogFormVisible" width="80%" :close-on-press-escape="false">
             <el-form :model="item">
                 <el-form-item label="标题" label-width="80px">
                     <el-input v-model="item.title" autocomplete="off"></el-input>
