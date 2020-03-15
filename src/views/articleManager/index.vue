@@ -250,7 +250,7 @@ export default {
             let that = this;
             let item = this.item;
             item.url = that.imageUrl;
-            if (item.typeId) {
+            if (item.typeId && Array.isArray(item.typeId)) {
                 item.typeId = item.typeId[item.typeId.length - 1 || 0]
             } else {
                 item.typeId = ''
