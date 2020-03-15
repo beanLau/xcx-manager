@@ -9,6 +9,8 @@ import Question from '../views/questionManager/index.vue'
 import Tag from '../views/tagManager/index.vue'
 import Type from '../views/typeManager/index.vue'
 import Special from '../views/specialManager/index.vue'
+import User from '../views/userManager/index.vue'
+import Comment from '../views/commentManage/index.vue'
 import Login from '../views/login/index.vue'
 
 Vue.use(Router)
@@ -56,6 +58,14 @@ export default new Router({
         {
           path: '/special',
           component: Special
+        },
+        {
+          path: '/user',
+          component: User
+        },
+        {
+          path: '/comment',
+          component: Comment
         }
       ]
     }

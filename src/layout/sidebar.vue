@@ -7,6 +7,7 @@
                     <span>内容管理</span>
                 </template>
                 <el-menu-item index="/">文章管理</el-menu-item>
+                <el-menu-item index="/comment">评论管理</el-menu-item>
                 <el-menu-item index="/question">试题管理</el-menu-item>
                 <el-menu-item index="/soul">心灵鸡汤</el-menu-item>
                 <el-menu-item index="/tag">标签管理</el-menu-item>
