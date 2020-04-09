@@ -32,7 +32,7 @@
             </el-table-column>
             <el-table-column label="难度" width="180">
                 <template slot-scope="scope">
-                    <el-rate v-model="scope.row.questionType" disabled show-score text-color="#ff9900" score-template="{value}">
+                    <el-rate v-model="scope.row.difficulty" disabled show-score text-color="#ff9900" score-template="{value}">
                     </el-rate>
                 </template>
             </el-table-column>
