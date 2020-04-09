@@ -11,6 +11,7 @@ import Type from '../views/typeManager/index.vue'
 import Special from '../views/specialManager/index.vue'
 import User from '../views/userManager/index.vue'
 import Comment from '../views/commentManage/index.vue'
+import Daily from '../views/dailyManager/index.vue'
 import Login from '../views/login/index.vue'
 
 Vue.use(Router)
@@ -66,6 +67,10 @@ export default new Router({
         {
           path: '/comment',
           component: Comment
+        },
+        {
+          path: '/daily',
+          component: Daily
         }
       ]
     }
