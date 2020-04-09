@@ -48,7 +48,7 @@
                     <el-cascader v-model="item.pid" :options="options" :props="{value:'_id',label:'name', checkStrictly: true }" clearable></el-cascader>
                 </el-form-item>
                 <el-form-item label="图标" label-width="80px">
-                    <el-upload class="avatar-uploader" action="/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                    <el-upload class="avatar-uploader" action="/api/upload" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                         <img v-if="imageUrl" :src="imageUrl" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
