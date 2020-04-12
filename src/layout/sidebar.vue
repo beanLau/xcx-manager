@@ -14,6 +14,7 @@
                 <el-menu-item index="/special">专题管理</el-menu-item>
                 <el-menu-item index="/type">类别管理</el-menu-item>
                 <el-menu-item index="/daily">每日一练</el-menu-item>
+                <el-menu-item index="/examine">小程序审核管理</el-menu-item>
             </el-submenu>
             <el-submenu index="/sys">
                 <template slot="title">

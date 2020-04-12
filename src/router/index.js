@@ -12,6 +12,7 @@ import Special from '../views/specialManager/index.vue'
 import User from '../views/userManager/index.vue'
 import Comment from '../views/commentManage/index.vue'
 import Daily from '../views/dailyManager/index.vue'
+import Examine from '../views/examineManager/index.vue'
 import Login from '../views/login/index.vue'
 
 Vue.use(Router)
@@ -71,6 +72,10 @@ export default new Router({
         {
           path: '/daily',
           component: Daily
+        },
+        {
+          path: '/examine',
+          component: Examine
         }
       ]
     }
